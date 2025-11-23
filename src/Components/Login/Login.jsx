@@ -1,22 +1,30 @@
-import React from "react";
-import { Link } from "react-router";
+import React, { useContext } from "react";
+import { Link } from "react-router-dom";
+import { AuthContext } from "../../Context/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Login = () => {
-  const { signInUser } = use(AuthContext);
-
-  const navigate = useNavigate();
-  const location = useLocation();
-  console.log("login loc", location);
+  const { signInUser, googleLogIn } = useContext(AuthContext); // FIXED
+  const navigate = useNavigate(); // FIXED IMPORT
+  const location = useLocation(); // FIXED IMPORT
 
   const handleLogin = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
-    console.log(email, password);
 
     signInUser(email, password)
       .then((result) => {
-        console.log(result);
+        navigate(location.state || "/", { replace: true });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleGoogleLogIn = () => {
+    googleLogIn()
+      .then((result) => {
         navigate(location.state || "/", { replace: true });
       })
       .catch((error) => {
@@ -30,6 +38,7 @@ const Login = () => {
         <h1 className="text-3xl sm:text-2xl font-bold text-gray-900 dark:text-white text-center mb-8">
           Log In Now!
         </h1>
+
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -42,6 +51,7 @@ const Login = () => {
               className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition"
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Password
@@ -53,15 +63,12 @@ const Login = () => {
               className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none transition"
             />
           </div>
-          <div className="flex justify-between text-sm">
-            <a className="text-blue-600 dark:text-blue-400 hover:underline">
-              Forgot password?
-            </a>
-          </div>
+
           <button className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-md transition">
             Login
           </button>
         </form>
+
         <p className="mt-6 text-center text-gray-600 dark:text-gray-400">
           New here?{" "}
           <Link
@@ -72,7 +79,10 @@ const Login = () => {
           </Link>
         </p>
 
-        <button className="btn bg-white text-black border-[#e5e5e5]">
+        <button
+          onClick={handleGoogleLogIn}
+          className="btn bg-white text-black border-[#e5e5e5]"
+        >
           <svg
             aria-label="Google logo"
             width="16"

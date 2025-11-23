@@ -6,10 +6,12 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../Firebase.init.js/Firebase.init";
+import { GoogleAuthProvider } from "firebase/auth/web-extension";
 
 const AuthProvider = ({ children }) => {
 const [user, setUser] = useState (null);
 
+const googleProvider = new GoogleAuthProvider();
 
 const [loading, setLoading] = useState (true);
 
@@ -32,6 +34,12 @@ if  (loading){
     setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
   };
+
+  const  googleLogIn = () => {
+    setLoading(true);
+return signInWithPopup(auth, googleProvider)
+    
+  }
 
 
   const signOutUser = () => {
@@ -61,6 +69,7 @@ if  (loading){
 
   const userInfo = {
     user,
+    googleLogIn,
     loading,
     createUser,
     signInUser,
